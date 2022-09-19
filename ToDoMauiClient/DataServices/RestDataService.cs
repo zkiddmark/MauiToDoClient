@@ -1,11 +1,5 @@
-﻿using Android.OS;
-using AndroidX.ConstraintLayout.Motion.Widget;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using ToDoMauiClient.Models;
 
 namespace ToDoMauiClient.DataServices;
@@ -38,14 +32,64 @@ public class RestDataService : IRestDataService
         };
     }
 
-    public Task AddTodoAsync(ToDo toDo)
+    public async Task AddTodoAsync(ToDo toDo)
     {
-        throw new NotImplementedException();
+        if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
+        {
+            Console.WriteLine("----> No internet access...");
+            return;
+        }
+
+        try
+        {
+            string jsonToDo = JsonSerializer.Serialize<ToDo>(toDo, _jsonSerializerOptions);
+            StringContent content = new(jsonToDo, Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = await _httpClient.PostAsync($"{_url}/todo", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("Successfully created todo");
+            }
+            else
+            {
+                Console.WriteLine("----> Non Http 2xx response");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ooops exception: {ex.Message}");
+        }
+
     }
 
-    public Task DeleteTodoAsync(int id)
+    public async Task DeleteTodoAsync(int id)
     {
-        throw new NotImplementedException();
+        if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
+        {
+            Console.WriteLine("----> No internet access...");
+            return;
+        }
+
+        try
+        {
+            HttpResponseMessage response = await _httpClient.DeleteAsync($"{_url}/todo/{id}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("Successfully deleted todo");
+            }
+            else
+            {
+                Console.WriteLine("----> Non Http 2xx response");
+            }
+        }
+        catch (Exception ex)
+        {
+
+            Console.WriteLine($"Ooops exception: {ex.Message}");
+        }
+
     }
 
     public async Task<List<ToDo>> GetAllToDosAsync()
@@ -81,8 +125,33 @@ public class RestDataService : IRestDataService
 
     }
 
-    public Task UpdateToDoAsync(ToDo toDo)
+    public async Task UpdateToDoAsync(ToDo toDo)
     {
-        throw new NotImplementedException();
+        if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
+        {
+            Console.WriteLine("----> No internet access...");
+            return;
+        }
+
+        try
+        {
+            string jsonToDo = JsonSerializer.Serialize<ToDo>(toDo, _jsonSerializerOptions);
+            StringContent content = new(jsonToDo, Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = await _httpClient.PutAsync($"{_url}/todo/{toDo.Id}", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("Successfully updated todo");
+            }
+            else
+            {
+                Console.WriteLine("----> Non Http 2xx response");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ooops exception: {ex.Message}");
+        }
     }
 }
