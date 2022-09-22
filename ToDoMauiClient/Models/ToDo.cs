@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 
 namespace ToDoMauiClient.Models;
 
@@ -18,21 +13,21 @@ public class ToDo : INotifyPropertyChanged
             if (_id == value)
                 return;
             _id = value;
-            PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Id)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Id)));
         }
     }
 
-    string _todoname;
+    string _toDoName;
     public string ToDoName 
     { 
-        get => _todoname;
+        get => _toDoName;
         set
         {
-            if (_todoname == value)
+            if (_toDoName == value)
                 return;
 
-            _todoname = value;
-            PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(ToDoName)));
+            _toDoName = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ToDoName)));
         }
     }
 

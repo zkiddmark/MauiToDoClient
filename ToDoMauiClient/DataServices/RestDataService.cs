@@ -14,17 +14,18 @@ public interface IRestDataService
 public class RestDataService : IRestDataService
 {
     private readonly HttpClient _httpClient;
-    private readonly string _baseAddress;
-    private readonly string _url;
+    //private readonly string _baseAddress;
+    //private readonly string _url;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
 
-    public RestDataService()
+    public RestDataService(HttpClient httpClient)
     {
-        _httpClient = new HttpClient();
-        _baseAddress = DeviceInfo.Platform == DevicePlatform.Android ?
-            "http://10.0.2.2:5264" :
-            "https://localhost:7264";
-        _url = $"{_baseAddress}/api";
+        _httpClient = httpClient;
+        _httpClient.BaseAddress = DeviceInfo.Platform == DevicePlatform.Android ?
+            new Uri("http://10.0.2.2:5264/api/") :
+            new Uri("https://localhost:7264/api/");
+
+        //_url = $"{_baseAddress}/api";
 
         _jsonSerializerOptions = new JsonSerializerOptions
         {
@@ -45,7 +46,7 @@ public class RestDataService : IRestDataService
             string jsonToDo = JsonSerializer.Serialize<ToDo>(toDo, _jsonSerializerOptions);
             StringContent content = new(jsonToDo, Encoding.UTF8, "application/json");
 
-            HttpResponseMessage response = await _httpClient.PostAsync($"{_url}/todo", content);
+            HttpResponseMessage response = await _httpClient.PostAsync($"todo", content);
 
             if (response.IsSuccessStatusCode)
             {
@@ -73,7 +74,7 @@ public class RestDataService : IRestDataService
 
         try
         {
-            HttpResponseMessage response = await _httpClient.DeleteAsync($"{_url}/todo/{id}");
+            HttpResponseMessage response = await _httpClient.DeleteAsync($"todo/{id}");
 
             if (response.IsSuccessStatusCode)
             {
@@ -104,7 +105,7 @@ public class RestDataService : IRestDataService
 
         try
         {
-            HttpResponseMessage response = await _httpClient.GetAsync($"{_url}/todo");
+            HttpResponseMessage response = await _httpClient.GetAsync($"todo");
             if(response.IsSuccessStatusCode)
             {
                 string content = await response.Content.ReadAsStringAsync();
@@ -137,8 +138,8 @@ public class RestDataService : IRestDataService
         {
             string jsonToDo = JsonSerializer.Serialize<ToDo>(toDo, _jsonSerializerOptions);
             StringContent content = new(jsonToDo, Encoding.UTF8, "application/json");
-
-            HttpResponseMessage response = await _httpClient.PutAsync($"{_url}/todo/{toDo.Id}", content);
+             
+            HttpResponseMessage response = await _httpClient.PutAsync($"todo/{toDo.Id}", content);
 
             if (response.IsSuccessStatusCode)
             {

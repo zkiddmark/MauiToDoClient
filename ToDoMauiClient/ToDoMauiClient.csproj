@@ -56,4 +56,14 @@
 	  <AndroidResource Include="Platforms\Android\xml\network_security_config.xml" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiXaml Update="Pages\ManageToDoPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	</ItemGroup>
+
 </Project>
